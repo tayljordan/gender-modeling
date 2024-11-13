@@ -12,7 +12,8 @@ This project demonstrates the implementation of a neural network using TensorFlo
 
 ## Co-Author
 
-[Padmapriya Jayaraman](https://github.com/padmapriyajayaraman)
+<a href="https://github.com/padmapriyajayaraman" style="text-decoration:none;">Dr. Padmapriya Jayaraman</a>
+
 
 ## Requirements
 
