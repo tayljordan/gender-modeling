@@ -10,6 +10,9 @@ This project demonstrates the implementation of a neural network using TensorFlo
 <img src="static/si_logo.png" alt="SI Logo" width="30%">
 </p>
 
+## Co-Author
+
+[Padmapriya Jayaraman](https://github.com/padmapriyajayaraman)
 
 ## Requirements
 
