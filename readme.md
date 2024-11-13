@@ -92,5 +92,7 @@ This study incorporates image preprocessing, visual embedding, and OpenAI’s GP
 
 ### In collaboration with:
 
-<img src="static/amet-logo.png" alt="AMET Logo" width="50%">
-<img src="static/si_logo.png" alt="SI Logo" width="50%">
+<p align="center">
+  <img src="static/amet-logo.png" alt="AMET Logo" width="45%" style="margin-right: 10px;">
+  <img src="static/si_logo.png" alt="SI Logo" width="45%">
+</p>
