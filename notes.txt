@@ -1,0 +1,9 @@
+Example datasets:
+
+https://paperswithcode.com/dataset/bffhq
+https://paperswithcode.com/dataset/lagenda
+https://paperswithcode.com/datasets?mod=images
+
+
+
+https://storage.googleapis.com/openimages/web/download_v7.html#download-tfds
