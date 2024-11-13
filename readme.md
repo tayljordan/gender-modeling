@@ -90,3 +90,7 @@ This work aligns with ongoing efforts to address gender disparity in the maritim
 
 This study incorporates image preprocessing, visual embedding, and OpenAI’s GPT-4 API to explore and mitigate gender bias in maritime-related imagery. Learn more about the methodology and its application in the context of gender equality in the maritime industry.
 
+In collaboration with:
+
+![AMET Logo](static/amet-logo.png)
+![SI Logo](static/si_logo.png)
