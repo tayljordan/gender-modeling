@@ -2,6 +2,13 @@
 
 This project demonstrates the implementation of a neural network using TensorFlow for gender identification in the maritime industry. The focus is on developing a model to analyze maritime-related imagery, contributing to research and solutions for gender disparity in the sector.
 
+## In collaboration with:
+
+<p align="center">
+  <img src="static/amet-logo.png" alt="AMET Logo" width="35%" style="margin-right: 10px;">
+  <img src="static/si_logo.png" alt="SI Logo" width="35%">
+</p>
+
 ## Requirements
 
 - Python 3.11+
@@ -90,9 +97,4 @@ This work aligns with ongoing efforts to address gender disparity in the maritim
 
 This study incorporates image preprocessing, visual embedding, and OpenAI’s GPT-4 API to explore and mitigate gender bias in maritime-related imagery. Learn more about the methodology and its application in the context of gender equality in the maritime industry.
 
-### In collaboration with:
 
-<p align="center">
-  <img src="static/amet-logo.png" alt="AMET Logo" width="45%" style="margin-right: 10px;">
-  <img src="static/si_logo.png" alt="SI Logo" width="45%">
-</p>
