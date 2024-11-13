@@ -6,7 +6,7 @@ This project demonstrates the implementation of a neural network using TensorFlo
 
 <p align="center">
   <img src="static/amet-logo.png" alt="AMET Logo" width="35%">
-&nbsp;  &nbsp;&nbsp;
+&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <img src="static/si_logo.png" alt="SI Logo" width="35%">
 </p>
 
