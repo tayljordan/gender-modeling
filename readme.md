@@ -5,8 +5,8 @@ This project demonstrates the implementation of a neural network using TensorFlo
 ## In collaboration with:
 
 <p align="center">
-  <img src="static/amet-logo.png" alt="AMET Logo" width="45%" style="margin-right: 10px;">
-  <img src="static/si_logo.png" alt="SI Logo" width="45%">
+  <img src="static/amet-logo.png" alt="AMET Logo" width="35%" style="margin-right: 30px;">
+  <img src="static/si_logo.png" alt="SI Logo" width="35%">
 </p>
 
 
