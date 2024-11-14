@@ -4,6 +4,7 @@ https://paperswithcode.com/dataset/bffhq
 https://paperswithcode.com/dataset/lagenda
 https://paperswithcode.com/datasets?mod=images
 
-
-
 https://storage.googleapis.com/openimages/web/download_v7.html#download-tfds
+
+Kaggle 5,700 face dataset
+https://www.kaggle.com/datasets/ashwingupta3012/male-and-female-faces-dataset
