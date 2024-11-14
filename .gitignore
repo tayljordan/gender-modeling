@@ -1,2 +1,4 @@
 /gender-dataset/female/
 /gender-dataset/male/
+/images.npy
+/labels.npy
