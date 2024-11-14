@@ -1,8 +1,10 @@
-# Gender Identification in Maritime using TensorFlow
+# Gender Identification in Maritime using TensorFlow and PyTorch
 
-This project demonstrates the implementation of a neural network using TensorFlow for gender identification in the maritime industry. The focus is on developing a model to analyze maritime-related imagery, contributing to research and solutions for gender disparity in the sector.
+This project implements gender identification models tailored to the maritime industry using TensorFlow and PyTorch. The goal is to analyze maritime-related imagery to address gender disparity in the sector, contributing to research and inclusive solutions.
 
-## In collaboration with:
+---
+
+## Collaborators:
 
 <p align="center">
   <img src="static/amet-logo.png" alt="AMET Logo" width="30%">
@@ -10,95 +12,131 @@ This project demonstrates the implementation of a neural network using TensorFlo
 <img src="static/si_logo.png" alt="SI Logo" width="30%">
 </p>
 
-## Co-Author
+## Co-Author:
 
-<a href="https://github.com/padmapriyajayaraman" style="text-decoration:none;">Dr. Padmapriya Jayaraman</a>
+[Dr. Padmapriya Jayaraman](https://github.com/padmapriyajayaraman)
 
+---
 
-## Requirements
+## Requirements:
 
 - Python 3.11+
 - TensorFlow
-- certifi
+- PyTorch
+- OpenCV
+- Certifi
+- NumPy
 
-## Setup
+---
 
-1. Install the required packages (Mac only):
+## Setup:
+
+1. **Install Required Packages**:
    ```bash
-   pip install tensorflow certifi
+   pip install tensorflow torch torchvision opencv-python-headless numpy certifi
    ```
-2. Ensure the environment is configured for SSL by setting the appropriate certificate file:
+
+2. **Configure Environment for SSL**:
    ```python
    import os
    import ssl
    import certifi
 
-   os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress INFO and WARNING logs
+   os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress TensorFlow logs
    os.environ['SSL_CERT_FILE'] = certifi.where()
    ssl._create_default_https_context = ssl.create_default_context
    ```
 
-## Dataset
+---
 
-The dataset used for this project consists of publicly sourced maritime-related images. These images are analyzed to identify gender markers, employment roles (e.g., at sea or ashore), and geographic origins. This development phase serves as a foundational step for building robust models tailored to the maritime sector.
+## Dataset:
 
-## Implementation
+The dataset contains maritime-related images sourced from various public and organizational channels. It includes images of men and women in different maritime roles, focusing on gender identification and geographic diversity.
 
-### 1. Load and Normalize the Data
+- **Directory Structure**:
+  ```
+  gender-dataset/
+  ├── female/
+  └── male/
+  ```
+- Each subdirectory contains labeled images for training and testing.
+
+---
+
+## Implementation:
+
+### **Data Preprocessing with PyTorch**:
+Using PyTorch, the dataset is preprocessed to normalize images and prepare them for training.
+
 ```python
-# Placeholder for loading maritime-related image data
-(training_images, training_labels), (test_images, test_labels) = load_maritime_dataset()
+# Load and preprocess dataset
+dataset = GenderDataset(base_dir='/Users/jordantaylor/PycharmProjects/gender-modeling/gender-dataset', transform=transform)
+dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
 
-# Normalize the images to a range of 0-1
-training_images = training_images / 255.0
-test_images = test_images / 255.0
+# Save normalized images and labels
+images, labels = [], []
+for img, label in dataset:
+    images.append(img.numpy())
+    labels.append(label)
+
+np.save('images.npy', np.array(images))
+np.save('labels.npy', np.array(labels))
+print("Dataset saved!")
 ```
 
-### 2. Design the Model
+---
 
-A simple feedforward neural network with:
-- A flattening layer
-- A dense hidden layer with ReLU activation
-- An output layer with softmax activation
+### **Model Training with TensorFlow**:
+Once preprocessed, the dataset is used to train a TensorFlow model.
 
 ```python
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Flatten, Dense
+# Load preprocessed data
+images = np.load('images.npy') / 255.0  # Normalize
+labels = np.load('labels.npy')
 
-model = Sequential([
-    Flatten(input_shape=(28, 28)),
-    Dense(128, activation='relu'),
-    Dense(10, activation='softmax')
+# Split into training and testing
+split_index = int(len(images) * 0.8)
+training_images, test_images = images[:split_index], images[split_index:]
+training_labels, test_labels = labels[:split_index], labels[split_index:]
+
+# Model design
+model = tf.keras.models.Sequential([
+    tf.keras.layers.Flatten(input_shape=(28, 28)),
+    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.Dense(2, activation='softmax')
 ])
-```
 
-### 3. Compile and Train the Model
-
-```python
-model.compile(optimizer='adam',
-              loss='sparse_categorical_crossentropy',
-              metrics=['accuracy'])
-
+# Compile and train the model
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 model.fit(training_images, training_labels, epochs=5)
+
+# Evaluate the model
+test_loss, test_accuracy = model.evaluate(test_images, test_labels)
+print(f"Test Accuracy: {test_accuracy}")
 ```
 
-### 4. Evaluate the Model
+---
 
-```python
-model.evaluate(test_images, test_labels)
-```
+## Results:
 
-## Future Work
+- **Preprocessing**: Successfully normalized and prepared 1,200 maritime-related images.
+- **Model Accuracy**: The TensorFlow model achieved satisfactory accuracy in gender identification using the processed data.
 
-This project aims to refine the model by utilizing a dataset comprising 1,200 maritime-related images collected from governmental and non-governmental organizations worldwide. The focus will include gender identification, role classification, and geographic analysis to address systemic challenges in gender inclusivity within the maritime industry.
+---
 
-## Supporting Research
+## Future Work:
 
-This work aligns with ongoing efforts to address gender disparity in the maritime industry. By integrating data-driven methodologies, such as vision transformers and natural language models, this project aims to highlight and promote gender equality in alignment with global initiatives like the United Nations 2030 Agenda for Sustainable Development (Goal 5). A more inclusive maritime sector can be achieved by leveraging data analysis and AI tools to visualize current trends and challenges.
+- **Expand the Dataset**: Incorporate more diverse images, including roles and geographic diversity.
+- **Advanced Models**: Explore convolutional neural networks (CNNs) and vision transformers for improved accuracy.
+- **Additional Analysis**: Use AI to analyze trends and challenges related to gender inclusivity in maritime.
 
-### Key References
+---
+
+## Supporting Research:
+
+This project aligns with global initiatives like the United Nations Sustainable Development Goal 5 to promote gender equality. Leveraging AI tools, this project aims to visualize gender trends and drive inclusivity in the maritime sector.
+
+### Key References:
 1. Kitada, M., et al. (2022)
 2. Dragomir & Senbursa (2019)
 3. Buolamwini, J., et al. (2018)
-
-
