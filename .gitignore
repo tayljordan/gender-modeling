@@ -1,4 +1,33 @@
-/gender-dataset/female/
-/gender-dataset/male/
+# Ignore datasets due Github restrictions
+/gender-dataset
 /images.npy
 /labels.npy
+
+# Ignore virtual environment
+venv/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore IDE or editor settings
+.idea/
+.vscode/
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore build artifacts
+build/
+dist/
+*.egg-info/
+
+# Ignore environment variables
+.env
