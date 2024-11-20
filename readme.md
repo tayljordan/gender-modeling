@@ -1,6 +1,6 @@
 # Gender Identification in Maritime using TensorFlow and PyTorch
 
-This project implements gender identification models tailored to the maritime industry using TensorFlow and PyTorch. The goal is to analyze maritime-related imagery to address gender disparity in the sector, contributing to research and inclusive solutions.
+This project implements gender identification models tailored to the maritime industry using TensorFlow and PyTorch. The goal is to analyze maritime-related imagery to address gender disparity in the maritime sector.
 
 ---
 
@@ -24,7 +24,6 @@ This project implements gender identification models tailored to the maritime in
 - TensorFlow
 - PyTorch
 - OpenCV
-- Certifi
 - NumPy
 
 ---
@@ -34,17 +33,6 @@ This project implements gender identification models tailored to the maritime in
 1. **Install Required Packages**:
    ```bash
    pip install tensorflow torch torchvision opencv-python-headless numpy certifi
-   ```
-
-2. **Configure Environment for SSL**:
-   ```python
-   import os
-   import ssl
-   import certifi
-
-   os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress TensorFlow logs
-   os.environ['SSL_CERT_FILE'] = certifi.where()
-   ssl._create_default_https_context = ssl.create_default_context
    ```
 
 ---

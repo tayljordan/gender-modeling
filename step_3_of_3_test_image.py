@@ -4,7 +4,8 @@ import numpy as np
 import tensorflow as tf
 
 # Load the model saved in .keras format
-model = tf.keras.models.load_model('model.keras')
+model = tf.keras.models.load_model('maritime_gender_recognition.keras')
+
 
 def preprocess_image(image_path):
     """Preprocess the image to match the model's input."""
@@ -15,6 +16,7 @@ def preprocess_image(image_path):
     img = np.expand_dims(img, axis=0)  # Add batch dimension
     return img
 
+
 def predict_gender(image_path):
     """Predict gender using the trained model."""
     preprocessed_img = preprocess_image(image_path)
@@ -22,7 +24,10 @@ def predict_gender(image_path):
     gender_label = np.argmax(predictions)  # Get the highest probability class
     return "Female" if gender_label == 0 else "Male"
 
+
 # Example usage
-image_path = '/Users/jordantaylor/PycharmProjects/gender-modeling/gender-dataset/male/1 (2).jpeg'
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+image_path = os.path.join(script_dir, "priya1.png")
 result = predict_gender(image_path)
 print(f"The predicted gender is: {result}")

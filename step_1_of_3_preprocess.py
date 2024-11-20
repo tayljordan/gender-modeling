@@ -5,8 +5,9 @@ from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms as transforms
 import numpy as np
 
-# Correct base directory
-base_dir = '/Users/jordantaylor/PycharmProjects/gender-modeling/gender-dataset'
+# Set the base directory relative to the script's location
+script_dir = os.path.dirname(os.path.abspath(__file__))  # Directory where the script is located
+base_dir = os.path.join(script_dir, "gender-dataset")  # Relative path to the dataset
 
 # Custom Dataset
 class GenderDataset(Dataset):
