@@ -1,5 +1,5 @@
 # Ignore datasets due Github restrictions
-/gender-dataset
+/gender-training-dataset
 /images.npy
 /labels.npy
 

@@ -11,3 +11,7 @@ https://www.kaggle.com/datasets/ashwingupta3012/male-and-female-faces-dataset
 
 
 git remote set-url origin https://tayljordan@github.com/tayljordan/gender-modeling
+
+# Face recognition
+https://paperswithcode.com/datasets?mod=images&task=face-recognition
+

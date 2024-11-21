@@ -4,8 +4,8 @@ from tkinter import Tk, Label, Button
 from PIL import Image, ImageTk
 
 # Directories
-source_dir = "/Users/jordantaylor/PycharmProjects/gender-modeling/gender-dataset/11Nov24_BIG"
-destination_dir = "/Users/jordantaylor/PycharmProjects/gender-modeling/gender-dataset/11Nov14_small"
+source_dir = "/Users/jordantaylor/Desktop/gender-modeling/manipulation_tools/11Nov24_f_faces"
+destination_dir = "/Users/jordantaylor/Desktop/gender-modeling/manipulation_tools/11Nov24_f_faces_clean"
 
 # Get list of images
 images = [f for f in os.listdir(source_dir) if f.lower().endswith(('png', 'jpg', 'jpeg'))]

@@ -1,13 +1,16 @@
+print("Processing...")
+
 import os
 import cv2
 import torch
 from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms as transforms
 import numpy as np
+from tqdm import tqdm
 
-# Set the base directory relative to the script's location
 script_dir = os.path.dirname(os.path.abspath(__file__))  # Directory where the script is located
-base_dir = os.path.join(script_dir, "gender-dataset")  # Relative path to the dataset
+base_dir = os.path.join(script_dir, "gender-training-dataset")  # Relative path to the dataset
+
 
 # Custom Dataset
 class GenderDataset(Dataset):
@@ -36,19 +39,23 @@ class GenderDataset(Dataset):
         img_path = self.data[idx]
         label = self.labels[idx]
         img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+
+        if img is None:  # Handle failed image load
+            raise ValueError(f"Failed to load image: {img_path}")
+
         img = cv2.resize(img, (28, 28))  # Resize to 28x28
 
         if self.transform:
             img = self.transform(img)
         else:
-            img = torch.tensor(img, dtype=torch.float32).unsqueeze(0) / 255.0  # Normalize
+            img = torch.tensor(img, dtype=torch.float32).unsqueeze(0)  # Add channel dimension
 
         return img, label
 
 
 # Data transforms
 transform = transforms.Compose([
-    transforms.ToTensor(),  # Convert to tensor
+    transforms.ToTensor(),  # Convert to tensor and scale [0, 255] to [0, 1]
     transforms.Normalize((0.5,), (0.5,))  # Normalize to [-1, 1]
 ])
 
@@ -58,22 +65,27 @@ dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
 
 # Check the dataset
 for images, labels in dataloader:
-    print(images.shape, labels.shape)
+    print(f"Batch shape: {images.shape}, Labels shape: {labels.shape}")
     break
 
-# Save images and labels
+# Save images and labels with progress indication
 images = []
 labels = []
 
-for img, label in dataset:
+for img, label in tqdm(dataset, desc="Processing images", unit="image"):
     images.append(img.numpy())
     labels.append(label)
 
 images = np.array(images)
 labels = np.array(labels)
 
-np.save('images.npy', images)
-np.save('labels.npy', labels)
+# Save the dataset in the script directory
+np.save(os.path.join(script_dir, 'images.npy'), images)
+np.save(os.path.join(script_dir, 'labels.npy'), labels)
 
-print("Dataset saved!")
+# Debugging: Print a few labels and corresponding file paths
+for i in range(10):
+    print(f"Image Path: {dataset.data[i]}, Label: {dataset.labels[i]}")
 
+print(f"Success! Images shape: {images.shape}, Labels shape: {labels.shape}")
+print("Proceed to Step 2.")

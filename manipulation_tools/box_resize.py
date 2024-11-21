@@ -4,8 +4,8 @@ import numpy as np
 import insightface
 
 # Define directories
-source_dir = "/Users/jordantaylor/PycharmProjects/gender-modeling/gender-dataset/11Nov14_small"
-target_dir = "/Users/jordantaylor/PycharmProjects/gender-modeling/gender-dataset/all_faces"
+source_dir = "/Users/jordantaylor/Desktop/gender-modeling/manipulation_tools/11Nov14_small"
+target_dir = "/Users/jordantaylor/Desktop/gender-modeling/manipulation_tools/11Nov24_f_faces"
 
 # Create target directory if it doesn't exist
 os.makedirs(target_dir, exist_ok=True)

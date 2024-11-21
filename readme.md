@@ -58,7 +58,7 @@ Using PyTorch, the dataset is preprocessed to normalize images and prepare them 
 
 ```python
 # Load and preprocess dataset
-dataset = GenderDataset(base_dir='/Users/jordantaylor/PycharmProjects/gender-modeling/gender-dataset', transform=transform)
+dataset = GenderDataset(base_dir='/Users/jordantaylor/PycharmProjects/gender-modeling/gender-training-dataset', transform=transform)
 dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
 
 # Save normalized images and labels
