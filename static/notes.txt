@@ -15,3 +15,13 @@ git remote set-url origin https://tayljordan@github.com/tayljordan/gender-modeli
 # Face recognition
 https://paperswithcode.com/datasets?mod=images&task=face-recognition
 
+# Dataset notes
+
+Demogpairs: https://ihupont.github.io/publications/2019-05-16-demogpairs
+
+
+# Use for benchmarking
+DigiFace: https://microsoft.github.io/DigiFace1M/
+
+# Large Vision Datasets
+https://universe.roboflow.com/
