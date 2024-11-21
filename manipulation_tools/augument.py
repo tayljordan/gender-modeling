@@ -49,6 +49,6 @@ def augment_and_save_images(input_dir, output_dir, augmentation, num_augmentatio
 
 
 # Example usage
-input_directory = "/Users/jordantaylor/Desktop/gender-modeling/gender-training-dataset/female"
-output_directory = "/Users/jordantaylor/Desktop/gender-modeling/gender-training-dataset/female_augmented"
+input_directory = "/Users/jordantaylor/Desktop/gender-modeling/gender-training-dataset/male"
+output_directory = "/Users/jordantaylor/Desktop/gender-modeling/gender-training-dataset/male_augmented"
 augment_and_save_images(input_directory, output_directory, augmentation, num_augmentations=10)

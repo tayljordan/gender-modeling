@@ -2,6 +2,7 @@
 /gender-training-dataset
 /images.npy
 /labels.npy
+/false_negatives
 
 # Ignore virtual environment
 venv/
