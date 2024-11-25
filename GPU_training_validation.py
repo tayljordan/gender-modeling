@@ -128,7 +128,7 @@ if lr_scheduler_params['enable']:
         monitor=lr_scheduler_params['monitor'],
         factor=lr_scheduler_params['factor'],
         patience=lr_scheduler_params['patience'],
-        min_lr=lr_scheduler_params['min_lr']
+        min_lr=float(lr_scheduler_params['min_lr'])  # Ensure min_lr is a float
     )
     callbacks = [early_stopping, model_checkpoint, tensorboard_callback, reduce_lr]
 else:

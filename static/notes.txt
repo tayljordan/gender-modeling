@@ -28,3 +28,36 @@ https://universe.roboflow.com/
 
 
 # Do not remove: tensorboard --logdir=logs/gender_model_v1
+
+
+
+chat what is your take on /Users/jordantaylor/.pyenv/versions/3.10.12/bin/python /Users/jordantaylor/PycharmProjects/gender-modeling/GPU_training_validation.py
+GPUs are available: 1 GPU(s) detected.
+Found 62888 images belonging to 2 classes.
+Found 15722 images belonging to 2 classes.
+/Users/jordantaylor/.pyenv/versions/3.10.12/lib/python3.10/site-packages/keras/src/trainers/data_adapters/py_dataset_adapter.py:121: UserWarning: Your PyDataset class should call super().__init__(**kwargs) in its constructor. **kwargs can include workers, use_multiprocessing, max_queue_size. Do not pass these arguments to fit(), as they will be ignored.
+  self._warn_if_super_not_called()
+Epoch 1/10
+983/983 ━━━━━━━━━━━━━━━━━━━━ 49s 49ms/step - accuracy: 0.6449 - loss: 3.7568 - val_accuracy: 0.5822 - val_loss: 0.8938 - learning_rate: 5.0000e-04
+Epoch 2/10
+983/983 ━━━━━━━━━━━━━━━━━━━━ 49s 50ms/step - accuracy: 0.8103 - loss: 0.5019 - val_accuracy: 0.6761 - val_loss: 0.7455 - learning_rate: 5.0000e-04
+Epoch 3/10
+983/983 ━━━━━━━━━━━━━━━━━━━━ 51s 52ms/step - accuracy: 0.8868 - loss: 0.3593 - val_accuracy: 0.7788 - val_loss: 0.5700 - learning_rate: 5.0000e-04
+Epoch 4/10
+983/983 ━━━━━━━━━━━━━━━━━━━━ 47s 48ms/step - accuracy: 0.9088 - loss: 0.3227 - val_accuracy: 0.7318 - val_loss: 0.7556 - learning_rate: 5.0000e-04
+Epoch 5/10
+983/983 ━━━━━━━━━━━━━━━━━━━━ 44s 45ms/step - accuracy: 0.9233 - loss: 0.2970 - val_accuracy: 0.7416 - val_loss: 0.6846 - learning_rate: 5.0000e-04
+Epoch 6/10
+983/983 ━━━━━━━━━━━━━━━━━━━━ 47s 48ms/step - accuracy: 0.9452 - loss: 0.2203 - val_accuracy: 0.7959 - val_loss: 0.5339 - learning_rate: 1.0000e-04
+Epoch 7/10
+983/983 ━━━━━━━━━━━━━━━━━━━━ 49s 50ms/step - accuracy: 0.9649 - loss: 0.1439 - val_accuracy: 0.7811 - val_loss: 0.6145 - learning_rate: 1.0000e-04
+Epoch 8/10
+983/983 ━━━━━━━━━━━━━━━━━━━━ 45s 46ms/step - accuracy: 0.9696 - loss: 0.1258 - val_accuracy: 0.7779 - val_loss: 0.6554 - learning_rate: 1.0000e-04
+Epoch 9/10
+983/983 ━━━━━━━━━━━━━━━━━━━━ 46s 47ms/step - accuracy: 0.9797 - loss: 0.1020 - val_accuracy: 0.8005 - val_loss: 0.5772 - learning_rate: 2.0000e-05
+Epoch 10/10
+983/983 ━━━━━━━━━━━━━━━━━━━━ 45s 45ms/step - accuracy: 0.9826 - loss: 0.0900 - val_accuracy: 0.7894 - val_loss: 0.6465 - learning_rate: 2.0000e-05
+246/246 ━━━━━━━━━━━━━━━━━━━━ 8s 32ms/step - accuracy: 0.7965 - loss: 0.5288
+Validation Loss: 0.5339, Validation Accuracy: 0.7959
+
+Process finished with exit code 0
