@@ -1,11 +1,16 @@
-# Ignore datasets due Github restrictions
-/gender-training-dataset
+# Ignore logs
+/logs/
+logs/
+*.log
+
+# Ignore datasets
+/gender-training-dataset/
 /images.npy
 /labels.npy
-/false_negatives
+/false_negatives/
 
 # Ignore virtual environment
-venv/
+/venv/
 
 # Ignore Python cache files
 __pycache__/
@@ -17,18 +22,17 @@ __pycache__/
 .idea/
 .vscode/
 
-# Ignore logs and temporary files
-*.log
-*.tmp
-
 # Ignore OS-specific files
 .DS_Store
 Thumbs.db
 
+# Ignore temporary files
+*.tmp
+
 # Ignore build artifacts
-build/
-dist/
-*.egg-info/
+/build/
+/dist/
+/*.egg-info/
 
 # Ignore environment variables
 .env

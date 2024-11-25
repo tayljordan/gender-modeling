@@ -25,3 +25,6 @@ DigiFace: https://microsoft.github.io/DigiFace1M/
 
 # Large Vision Datasets
 https://universe.roboflow.com/
+
+
+# Do not remove: tensorboard --logdir=logs/gender_model_v1
