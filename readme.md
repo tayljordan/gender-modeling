@@ -179,17 +179,4 @@ tensorboard --logdir=logs/gender_model_v1
 This project is licensed under the MIT License. See `LICENSE` for more details.
 ```
 
----
 
-### **Highlights of the README**
-1. **Comprehensive**:
-   - Explains the purpose and features of the project.
-   - Provides clear instructions for setup and usage.
-
-2. **Dynamic**:
-   - Reflects the YAML-driven configuration for easy adjustments.
-
-3. **Scalable**:
-   - Designed to allow future expansion (e.g., grayscale support, other optimizers).
-
-Let me know if you'd like further refinements!
