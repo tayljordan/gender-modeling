@@ -1,8 +1,8 @@
 parameters:
   image_size: [64, 64]  # Input size of the images (height, width)
   batch_size: 64  # Number of images processed in a single training batch
-  epochs: 7  # Reduce epochs to prevent overfitting
-  rescale: 0.00392156862745098 # Pixel value rescaling factor (e.g., 1.0/255 to normalize to [0, 1])
+  epochs: 15  # Allow more epochs but use early stopping to prevent overfitting
+  rescale: 0.00392156862745098  # Pixel value rescaling factor (e.g., 1.0/255 to normalize to [0, 1])
   validation_split: 0.2  # Fraction of the training data reserved for validation
   optimizer:
     type: "Adam"  # Optimizer type: SGD (Stochastic Gradient Descent), Adam, etc.
@@ -14,18 +14,18 @@ parameters:
   lr_scheduler:
     enable: true  # Enable learning rate reduction on plateau
     monitor: "val_loss"  # Metric to monitor for reducing learning rate
-    factor: 0.3  # Reduce learning rate by 30% when no improvement
+    factor: 0.5  # Reduce learning rate by 50% when no improvement
     patience: 2  # Number of epochs with no improvement before reducing learning rate
     min_lr: 0.00001  # Minimum allowed learning rate
   regularization:
-    l2: 0.005  # Increased L2 regularization factor to reduce overfitting
-    l1: 0.001  # L1 regularization factor remains at 0.0 for sparsity
-  dense_units: [128]  # Simplified model by reducing the number of dense units
-  dropout_rate: 0.6  # Increased dropout to 60% for better regularization
+    l2: 0.005  # Increased L2 regularization to reduce overfitting
+    l1: 0.001  # Added L1 regularization for sparsity
+  dense_units: [256, 128]  # Slightly increased model complexity to capture more patterns
+  dropout_rate: 0.5  # Reduced dropout for better balance between regularization and learning
 
   class_weights:
-    male: 1.0  # Weight for the male class in imbalanced datasets
-    female: 1.0  # Weight for the female class in imbalanced datasets
+    male: 1.2  # Adjust weights if class imbalance exists
+    female: 1.0  # Default weight for balanced classes
 directories:
   female_dir: "gender-training-dataset/female_augmented"  # Path to the augmented female images
   male_dir: "gender-training-dataset/male_augmented"  # Path to the augmented male images
@@ -43,14 +43,18 @@ model:
     filepath: "best_gender_model.keras"  # File path for saving model checkpoints
     monitor: "val_loss"  # Metric to monitor for saving the best model
     save_best_only: true  # Save the model only if it improves the monitored metric
+    early_stopping:
+      monitor: "val_loss"  # Monitor validation loss for early stopping
+      patience: 3  # Stop training after 3 epochs of no improvement
+      restore_best_weights: true  # Restore weights from the best-performing epoch
 seed: 42  # Random seed for reproducibility
 
 data_generators:
   enable_augmentation: true  # Enable data augmentation for better generalization
   augmentation_params:
-    rotation_range: 15  # Rotate images by up to 15 degrees
-    width_shift_range: 0.1  # Shift width by up to 10%
-    height_shift_range: 0.1  # Shift height by up to 10%
-    shear_range: 0.15  # Apply shearing transformations
-    zoom_range: 0.2  # Randomly zoom images by 20%
+    rotation_range: 20  # Increase rotation range for more variability
+    width_shift_range: 0.2  # Allow larger width shifts
+    height_shift_range: 0.2  # Allow larger height shifts
+    shear_range: 0.2  # Increase shear for more variability
+    zoom_range: 0.3  # Increase zoom for more diverse inputs
     horizontal_flip: true  # Flip images horizontally
