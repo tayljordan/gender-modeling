@@ -1,13 +1,12 @@
 import os
-
-# Suppress TensorFlow logs
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-
 import yaml
 import tensorflow as tf
 from tensorflow.keras import layers, models, regularizers
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard, ReduceLROnPlateau
+
+# Suppress TensorFlow logs
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 # Load configuration from config.yaml
 config_path = os.path.join(os.getcwd(), "config.yaml")
@@ -23,19 +22,16 @@ rescale = params['rescale']  # Rescaling factor
 validation_split = params['validation_split']  # Validation split fraction
 
 # Optimizer parameters
-optimizer_type = params['optimizer']['type'].lower()  # Ensure lowercase for comparison
+optimizer_type = params['optimizer']['type'].lower()
 learning_rate = params['optimizer']['learning_rate']
-momentum = params['optimizer'].get('momentum', 0.0)  # Default to 0.0 if not using SGD
 
 # Regularization and model architecture
-dense_units = params['dense_units']  # Dense layer units
-dropout_rate = params['dropout_rate']  # Dropout rate
-l2_regularization = params['regularization']['l2']  # L2 regularization
-l1_regularization = params['regularization']['l1']  # L1 regularization
+dense_units = params['dense_units']
+dropout_rate = params['dropout_rate']
+l2_regularization = params['regularization']['l2']
 
 # Directories
-female_dir = config['directories']['female_dir']
-male_dir = config['directories']['male_dir']
+data_dir = "gender-training-dataset"
 tensorboard_log_dir = config['logs']['tensorboard']['log_dir']
 model_path = config['model']['path']
 
@@ -50,15 +46,15 @@ if gpus:
 else:
     print("No GPUs detected. Using CPU.")
 
-# Data generators
+# Data generators (no augmentation)
 datagen = ImageDataGenerator(
-    rescale=1.0 / 255,
+    rescale=rescale,           # Only rescale the pixel values
     validation_split=validation_split  # Split training and validation data
 )
 
 # Training data generator
 train_generator = datagen.flow_from_directory(
-    directory=os.path.dirname(female_dir),
+    directory=data_dir,
     target_size=image_size,
     batch_size=batch_size,
     class_mode='binary',
@@ -67,27 +63,42 @@ train_generator = datagen.flow_from_directory(
 
 # Validation data generator
 val_generator = datagen.flow_from_directory(
-    directory=os.path.dirname(female_dir),
+    directory=data_dir,
     target_size=image_size,
     batch_size=batch_size,
     class_mode='binary',
     subset='validation'
 )
 
+# Check class indices
+print(f"Class indices: {train_generator.class_indices}")
+
 # Build the model
 model = models.Sequential([
     layers.Input(shape=(image_size[0], image_size[1], 3)),
-    layers.Conv2D(32, (3, 3), activation='relu'),
+    layers.Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_normal'),
     layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
-    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.Dropout(0.3),
+
+    layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_normal'),
     layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
-    layers.Conv2D(128, (3, 3), activation='relu'),
+    layers.Dropout(0.3),
+
+    layers.Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_normal'),
     layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
-    layers.Flatten()
+
+    layers.Conv2D(256, (3, 3), activation='relu', kernel_initializer='he_normal'),
+    layers.BatchNormalization(),
+    layers.GlobalAveragePooling2D(),  # Replace Flatten with GlobalAveragePooling
+
+    layers.Dense(128, activation='relu', kernel_regularizer=regularizers.l2(0.005)),
+    layers.Dropout(0.5),
+    layers.Dense(1, activation='sigmoid')  # Binary classification output
 ])
+
 
 # Add dense layers
 for units in dense_units:
@@ -99,7 +110,7 @@ model.add(layers.Dense(1, activation='sigmoid'))  # Binary classification output
 
 # Compile the model
 if optimizer_type == "sgd":
-    optimizer = tf.keras.optimizers.SGD(learning_rate=learning_rate, momentum=momentum)
+    optimizer = tf.keras.optimizers.SGD(learning_rate=learning_rate)
 elif optimizer_type == "adam":
     optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 else:
@@ -128,7 +139,7 @@ if lr_scheduler_params['enable']:
         monitor=lr_scheduler_params['monitor'],
         factor=lr_scheduler_params['factor'],
         patience=lr_scheduler_params['patience'],
-        min_lr=float(lr_scheduler_params['min_lr'])  # Ensure min_lr is a float
+        min_lr=float(lr_scheduler_params['min_lr'])
     )
     callbacks = [early_stopping, model_checkpoint, tensorboard_callback, reduce_lr]
 else:

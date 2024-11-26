@@ -1,8 +1,10 @@
 import albumentations as A
 import cv2
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm import tqdm
 
-# Define the augmentations with random probabilities, excluding bbox-specific transformations
+# Define the augmentations
 augmentation = A.Compose([
     A.HorizontalFlip(p=0.5),
     A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=0.5),
@@ -18,37 +20,40 @@ augmentation = A.Compose([
 ])
 
 
-def augment_and_save_images(input_dir, output_dir, augmentation, num_augmentations=3):
-    """
-    Apply augmentations to all images in a directory and save the augmented images.
+def augment_and_save_image(filename, input_dir, output_dir, augmentation, num_augmentations=3):
+    img_path = os.path.join(input_dir, filename)
+    image = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
+    if image is None:
+        return  # Skip invalid images
 
-    Args:
-    input_dir (str): Directory containing input images.
-    output_dir (str): Directory to save augmented images.
-    augmentation (albumentations.Compose): Augmentation pipeline.
-    num_augmentations (int): Number of augmented images per original image.
-    """
+    for i in range(num_augmentations):
+        augmented = augmentation(image=image)
+        augmented_image = augmented['image']
+
+        # Save augmented image
+        output_path = os.path.join(output_dir, f"{filename.split('.')[0]}_aug_{i + 1}.jpg")
+        cv2.imwrite(output_path, augmented_image)
+
+
+def augment_and_save_images_parallel(input_dir, output_dir, augmentation, num_augmentations=3, max_workers=8):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    # Iterate over all files in the input directory
-    for filename in os.listdir(input_dir):
-        if filename.endswith(".jpg") or filename.endswith(".png"):  # Add more formats if needed
-            img_path = os.path.join(input_dir, filename)
-            image = cv2.imread(img_path)
+    files = [f for f in os.listdir(input_dir) if f.endswith(".jpg") or f.endswith(".png")]
 
-            # Apply augmentations multiple times, with each augmentation applied randomly
-            for i in range(num_augmentations):
-                augmented = augmentation(image=image)
-                augmented_image = augmented['image']
-
-                # Save augmented image
-                output_path = os.path.join(output_dir, f"{filename.split('.')[0]}_aug_{i + 1}.jpg")
-                cv2.imwrite(output_path, augmented_image)
-                print(f"Saved augmented image {output_path}")
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [
+            executor.submit(
+                augment_and_save_image,
+                filename, input_dir, output_dir, augmentation, num_augmentations
+            )
+            for filename in files
+        ]
+        for _ in tqdm(as_completed(futures), total=len(files), desc="Augmenting Images"):
+            pass
 
 
 # Example usage
 input_directory = "/Users/jordantaylor/PycharmProjects/gender-modeling/test-set-female"
 output_directory = "/Users/jordantaylor/PycharmProjects/gender-modeling/test-set-female"
-augment_and_save_images(input_directory, output_directory, augmentation, num_augmentations=10)
+augment_and_save_images_parallel(input_directory, output_directory, augmentation, num_augmentations=10, max_workers=8)

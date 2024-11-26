@@ -8,6 +8,9 @@ logs/
 /images.npy
 /labels.npy
 /false_negatives/
+/test-set-female/
+/test-set-male/
+/test-set-large-female/
 
 # Ignore virtual environment
 /venv/

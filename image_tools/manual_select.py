@@ -4,7 +4,7 @@ from tkinter import Tk, Label, Button
 from PIL import Image, ImageTk
 
 # Directories
-source_dir = "/Users/jordantaylor/Desktop/gender-modeling/image_tools/11Nov24_f_faces"
+source_dir = "/Users/jordantaylor/PycharmProjects/gender-modeling/test-set-female"
 destination_dir = "/Users/jordantaylor/Desktop/gender-modeling/image_tools/11Nov24_f_faces_clean"
 
 # Get list of images
