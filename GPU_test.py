@@ -48,6 +48,7 @@ def preprocess_image(image_path, rescale_factor):
 def process_directory(directory_path, actual_label, rescale_factor):
     correct_predictions = 0
     total_images = 0
+    debug_info = []
 
     for filename in os.listdir(directory_path):
         file_path = os.path.join(directory_path, filename)
@@ -56,9 +57,15 @@ def process_directory(directory_path, actual_label, rescale_factor):
             if processed_image is not None:
                 prediction = model.predict(processed_image, verbose=0)
                 predicted_label = 1 if prediction[0][0] > 0.5 else 0  # Male=1, Female=0
+                debug_info.append((filename, prediction[0][0], predicted_label, actual_label))
                 if predicted_label == actual_label:
                     correct_predictions += 1
                 total_images += 1
+
+    # Print debugging info
+    print(f"Debugging Predictions for {directory_path}:")
+    for info in debug_info[:10]:  # Limit to first 10 for readability
+        print(f"File: {info[0]}, Predicted Score: {info[1]:.4f}, Predicted Label: {info[2]}, Actual Label: {info[3]}")
 
     accuracy = correct_predictions / total_images * 100 if total_images > 0 else 0
     print(f"Processed {total_images} images in {directory_path}. Accuracy: {accuracy:.2f}%")

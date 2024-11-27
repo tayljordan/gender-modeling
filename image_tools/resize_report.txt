@@ -1,0 +1,6 @@
+Total images processed: 629
+Images resized: 230
+Images skipped (low resolution): 399
+Errors: 0
+Average memory usage: 75.20%
+Total time taken: 0.99 seconds

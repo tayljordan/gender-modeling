@@ -134,7 +134,7 @@ tensorboard_callback = TensorBoard(
     histogram_freq=config['logs']['tensorboard']['histogram_freq']
 )
 
-if lr_scheduler_params['enable']:
+if lr_scheduler_params.get('enable', False):  # Default to False if 'enable' is missing
     reduce_lr = ReduceLROnPlateau(
         monitor=lr_scheduler_params['monitor'],
         factor=lr_scheduler_params['factor'],
@@ -144,6 +144,7 @@ if lr_scheduler_params['enable']:
     callbacks = [early_stopping, model_checkpoint, tensorboard_callback, reduce_lr]
 else:
     callbacks = [early_stopping, model_checkpoint, tensorboard_callback]
+
 
 # Training
 history = model.fit(

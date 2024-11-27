@@ -61,10 +61,10 @@ val_generator = datagen.flow_from_directory(
     subset='validation'
 )
 
-# MobileNetV2 with pretrained weights
-base_model = tf.keras.applications.MobileNetV2(
+# InceptionV3 with pretrained weights
+base_model = tf.keras.applications.InceptionV3(
     input_shape=(image_size[0], image_size[1], 3),
-    include_top=False,
+    include_top=False,  # Remove the fully connected top layers
     weights='imagenet'  # Use pretrained weights
 )
 
