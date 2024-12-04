@@ -85,7 +85,7 @@ def resize_images_with_report(paths, target_size=(224, 224), output_base_dir="/U
 
 paths = [
     "/Users/jordantaylor/Desktop/female_maritime_curated_399",
-    "/Users/jordantaylor/Desktop/female_maritime_curated_270"
+    "/Users/jordantaylor/Desktop/female_maritime_curated_95"
 ]
 
 resize_images_with_report(paths, target_size=(224, 224), report_path="resize_report.txt")

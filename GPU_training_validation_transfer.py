@@ -1,52 +1,66 @@
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="keras.src.trainers.data_adapters.py_dataset_adapter")
+
 import os
 import yaml
+import datetime
 import tensorflow as tf
-from tensorflow.keras import layers, models, regularizers
+from tensorflow.keras import layers, regularizers
+from tensorflow.keras.applications import VGG16
+from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.optimizers.schedules import ExponentialDecay
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+import keras_tuner as kt
+
+# Suppress TensorFlow logs
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
+# Timestamp for logs
+timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+log_dir = f"./logs/run_{timestamp}"
+os.makedirs(log_dir, exist_ok=True)
 
 # Load configuration from config.yaml
 config_path = os.path.join(os.getcwd(), "config.yaml")
 with open(config_path, "r") as file:
     config = yaml.safe_load(file)
 
+# Save the YAML snapshot in the log directory
+yaml_snapshot_path = os.path.join(log_dir, "config_snapshot.yaml")
+with open(yaml_snapshot_path, "w") as yaml_file:
+    yaml.dump(config, yaml_file)
+
 # Extract parameters from config
 params = config['parameters']
-image_size = tuple(params['image_size'])  # Input size of the images
-batch_size = params['batch_size']  # Batch size
-epochs = params['epochs']  # Number of epochs for each training phase
-rescale = float(params['rescale'])  # Rescaling factor
-learning_rate = params['optimizer']['learning_rate']  # Learning rate for initial training
-fine_tune_lr = learning_rate / 10  # Lower learning rate for fine-tuning
-dense_units = params['dense_units']  # Dense layer units
-dropout_rate = params['dropout_rate']  # Dropout rate
-l2_regularization = params['regularization']['l2']  # L2 regularization factor
+image_size = tuple(params['image_size'])
+batch_size = params['batch_size']
+epochs = params['epochs']
+rescale = params['rescale']
+validation_split = params['validation_split']
+dense_units = params['dense_units']
+dropout_rate = params['dropout_rate']
+l2_regularization = params['regularization']['l2']
 
-# Directories
-female_dir = os.path.join(os.getcwd(), config['directories']['female_dir'])
-male_dir = os.path.join(os.getcwd(), config['directories']['male_dir'])
-tensorboard_log_dir = os.path.join(os.getcwd(), config['logs']['tensorboard']['log_dir'])
-model_path = os.path.join(os.getcwd(), config['model']['path'])
-
-# Callbacks configuration
-checkpoint_params = config['model']['checkpoint']
-lr_scheduler_params = params['lr_scheduler']
+data_dir = config['directories']['data_dir']
+model_path = config['model']['path']
 
 # GPU check
 gpus = tf.config.list_physical_devices('GPU')
+gpu_status = f"GPUs are available: {len(gpus)} GPU(s) detected." if gpus else "No GPUs detected. Using CPU."
+print(gpu_status)
 if gpus:
-    print(f"GPUs are available: {len(gpus)} GPU(s) detected.")
-else:
-    print("No GPUs detected. Using CPU.")
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
 
 # Data generators
 datagen = ImageDataGenerator(
     rescale=rescale,
-    validation_split=params['validation_split']  # Split training and validation data
+    validation_split=validation_split
 )
 
 train_generator = datagen.flow_from_directory(
-    directory=os.path.dirname(female_dir),
+    directory=data_dir,
     target_size=image_size,
     batch_size=batch_size,
     class_mode='binary',
@@ -54,85 +68,72 @@ train_generator = datagen.flow_from_directory(
 )
 
 val_generator = datagen.flow_from_directory(
-    directory=os.path.dirname(female_dir),
+    directory=data_dir,
     target_size=image_size,
     batch_size=batch_size,
     class_mode='binary',
     subset='validation'
 )
 
-# InceptionV3 with pretrained weights
-base_model = tf.keras.applications.InceptionV3(
-    input_shape=(image_size[0], image_size[1], 3),
-    include_top=False,  # Remove the fully connected top layers
-    weights='imagenet'  # Use pretrained weights
-)
 
-# Freeze the base model initially
-base_model.trainable = False
+# Keras Tuner Model Builder
+def build_model(hp):
+    base_model = VGG16(weights='imagenet', include_top=False, input_shape=(image_size[0], image_size[1], 3))
+    base_model.trainable = False  # Freeze base model
 
-# Add custom layers
-model = models.Sequential([
-    base_model,
-    layers.GlobalAveragePooling2D(),
-    layers.Dropout(dropout_rate),
-    layers.Dense(dense_units[0], activation='relu', kernel_regularizer=regularizers.l2(l2_regularization)),
-    layers.Dropout(dropout_rate),
-    layers.Dense(1, activation='sigmoid')
-])
+    x = base_model.output
+    x = layers.GlobalAveragePooling2D()(x)
 
-# Compile the model for the initial training phase
-model.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
-    loss='binary_crossentropy',
-    metrics=['accuracy']
+    for i in range(hp.Int("num_dense_layers", 1, 3)):  # 1-3 Dense Layers
+        x = layers.Dense(
+            units=hp.Int(f"dense_units_{i}", 64, 512, step=64),  # Tune units: 64-512
+            activation='relu',
+            kernel_regularizer=regularizers.l2(l2_regularization)
+        )(x)
+        x = layers.Dropout(rate=hp.Float(f"dropout_rate_{i}", 0.2, 0.5, step=0.1))(x)  # Dropout: 0.2-0.5
+
+    output = layers.Dense(1, activation='sigmoid')(x)
+
+    model = Model(inputs=base_model.input, outputs=output)
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(
+            learning_rate=hp.Choice("learning_rate", [1e-2, 1e-3, 1e-4])  # Learning rate: 0.01, 0.001, 0.0001
+        ),
+        loss='binary_crossentropy',
+        metrics=['accuracy']
+    )
+    return model
+
+
+# Initialize Keras Tuner
+tuner = kt.Hyperband(
+    build_model,
+    objective='val_accuracy',
+    max_epochs=10,
+    factor=3,
+    directory=log_dir,
+    project_name="vgg16_nas"
 )
 
 # Callbacks
-early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
-reduce_lr = ReduceLROnPlateau(
-    monitor=lr_scheduler_params['monitor'],
-    factor=lr_scheduler_params['factor'],
-    patience=lr_scheduler_params['patience'],
-    min_lr=lr_scheduler_params['min_lr']
-)
-model_checkpoint = ModelCheckpoint(
-    filepath=checkpoint_params['filepath'],
-    monitor=checkpoint_params['monitor'],
-    save_best_only=checkpoint_params['save_best_only']
-)
-tensorboard_callback = tf.keras.callbacks.TensorBoard(
-    log_dir=tensorboard_log_dir,
-    histogram_freq=config['logs']['tensorboard']['histogram_freq']
-)
+callbacks = [
+    EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True),
+    ModelCheckpoint(filepath=model_path, monitor='val_loss', save_best_only=True)
+]
 
-callbacks = [early_stopping, reduce_lr, model_checkpoint, tensorboard_callback]
-
-# Train only the top layers
-model.fit(
+# Perform Hyperparameter Search
+tuner.search(
     train_generator,
     validation_data=val_generator,
     epochs=epochs,
     callbacks=callbacks
 )
 
-# Fine-tune the base model
-base_model.trainable = True
+# Get Best Model
+best_model = tuner.get_best_models(num_models=1)[0]
+best_model.summary()
 
-# Recompile the model for the fine-tuning phase
-model.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=fine_tune_lr),
-    loss='binary_crossentropy',
-    metrics=['accuracy']
-)
-
-# Continue training with the base model unfrozen
-model.fit(
-    train_generator,
-    validation_data=val_generator,
-    epochs=epochs,
-    callbacks=callbacks
-)
-
-# Save the final model
-model.save(model_path)
+# Evaluate and Save the Best Model
+loss, accuracy = best_model.evaluate(val_generator, verbose=1)
+print(f"Validation Loss: {loss:.4f}, Validation Accuracy: {accuracy:.4f}")
+best_model.save(model_path)

@@ -4,6 +4,8 @@ import shutil
 
 # Paths
 master_dataset_dir = "/Users/jordantaylor/PycharmProjects/gender-modeling/gender-master-dataset"
+priority_female_dir = os.path.join(master_dataset_dir, "demog_female_no_caucasian")
+priority_male_dir = os.path.join(master_dataset_dir, "demog_male_no_caucasian")
 train_val_female_dir = "/Users/jordantaylor/PycharmProjects/gender-modeling/gender-training-dataset/female_augmented"
 train_val_male_dir = "/Users/jordantaylor/PycharmProjects/gender-modeling/gender-training-dataset/male_augmented"
 test_female_dir = "/Users/jordantaylor/PycharmProjects/gender-modeling/test-set-female"
@@ -12,22 +14,27 @@ test_male_dir = "/Users/jordantaylor/PycharmProjects/gender-modeling/test-set-ma
 # Split ratio
 test_ratio = 0.2  # 20% for testing
 
-# Function to copy equal numbers of images for both categories
-def copy_images_balanced(master_dir, train_val_female, train_val_male, test_female, test_male, num_images, test_ratio):
-    # Ensure target directories exist
+# Function to prioritize and copy images
+def copy_images_balanced(master_dir, priority_female, priority_male, train_val_female, train_val_male, test_female, test_male, num_images, test_ratio):
     os.makedirs(train_val_female, exist_ok=True)
     os.makedirs(train_val_male, exist_ok=True)
     os.makedirs(test_female, exist_ok=True)
     os.makedirs(test_male, exist_ok=True)
 
-    # Collect all female and male images
-    female_images = []
-    male_images = []
+    # Helper function to gather images from a directory
+    def gather_images(directory):
+        return [os.path.join(directory, file) for file in os.listdir(directory)
+                if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.webp'))]
+
+    # Collect priority images
+    female_images = gather_images(priority_female)
+    male_images = gather_images(priority_male)
+
+    # Collect remaining images from other directories
     for subdir in os.listdir(master_dir):
         subdir_path = os.path.join(master_dir, subdir)
-        if os.path.isdir(subdir_path):
-            images = [os.path.join(subdir_path, file) for file in os.listdir(subdir_path)
-                      if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.webp'))]
+        if os.path.isdir(subdir_path) and subdir_path not in [priority_female, priority_male]:
+            images = gather_images(subdir_path)
             if "female" in subdir.lower():
                 female_images.extend(images)
             elif "male" in subdir.lower():
@@ -62,9 +69,11 @@ def copy_images_balanced(master_dir, train_val_female, train_val_male, test_fema
     print(f"Copied {len(test_male_images)} images to {test_male}")
 
 # Example usage
-num_images_to_pull = 2000  # Specify the maximum number of images to pull
+num_images_to_pull = 12000  # Specify the maximum number of images to pull
 copy_images_balanced(
     master_dir=master_dataset_dir,
+    priority_female=priority_female_dir,
+    priority_male=priority_male_dir,
     train_val_female=train_val_female_dir,
     train_val_male=train_val_male_dir,
     test_female=test_female_dir,

@@ -54,6 +54,10 @@ def augment_and_save_images_parallel(input_dir, output_dir, augmentation, num_au
 
 
 # Example usage
-input_directory = "/Users/jordantaylor/PycharmProjects/gender-modeling/test-set-female"
-output_directory = "/Users/jordantaylor/PycharmProjects/gender-modeling/test-set-female"
+input_directory = "/Users/jordantaylor/PycharmProjects/gender-modeling/gender-training-dataset/male_augmented"
+output_directory = "/Users/jordantaylor/PycharmProjects/gender-modeling/gender-training-dataset/male_augmented"
+augment_and_save_images_parallel(input_directory, output_directory, augmentation, num_augmentations=10, max_workers=8)
+
+input_directory = "/Users/jordantaylor/PycharmProjects/gender-modeling/gender-training-dataset/female_augmented"
+output_directory = "/Users/jordantaylor/PycharmProjects/gender-modeling/gender-training-dataset/female_augmented"
 augment_and_save_images_parallel(input_directory, output_directory, augmentation, num_augmentations=10, max_workers=8)
