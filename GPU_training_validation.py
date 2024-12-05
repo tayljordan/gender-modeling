@@ -128,7 +128,7 @@ def build_model(hp):
 tuner = kt.Hyperband(
     build_model,
     objective="val_accuracy",
-    max_epochs=10,
+    max_epochs=params['epochs'],  # Use YAML epochs for tuning
     factor=3,
     directory=log_dir,
     project_name="cnn_tuning"
