@@ -7,6 +7,7 @@ from tensorflow.keras import layers, models, regularizers
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras.optimizers.schedules import ExponentialDecay
+import keras_tuner as kt  # Import Keras Tuner
 
 # Suppress TensorFlow logs
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -34,40 +35,16 @@ epochs = params['epochs']
 rescale = params['rescale']
 validation_split = params['validation_split']
 
-# Optimizer parameters
-optimizer_type = params['optimizer']['type'].lower()
-learning_rate = params['optimizer']['learning_rate']
-
-# Regularization
-dense_units = params['dense_units']
-dropout_rate = params['dropout_rate']
-l1_regularization = params['regularization']['l1']
-l2_regularization = params['regularization']['l2']
-
 # Directories
 data_dir = config['directories']['data_dir']
-
 model_path = config['model']['path']
 
-# Callbacks configuration
-checkpoint_params = config['model']['checkpoint']
-lr_scheduler_params = params['lr_scheduler']
-
-# GPU check
-gpus = tf.config.list_physical_devices('GPU')
-gpu_status = f"GPUs are available: {len(gpus)} GPU(s) detected." if gpus else "No GPUs detected. Using CPU."
-print(gpu_status)
-if gpus:
-    for gpu in gpus:
-        tf.config.experimental.set_memory_growth(gpu, True)
-
-# Data generators with augmentation toggling
+# Data generators
 datagen = ImageDataGenerator(
     rescale=rescale,
     validation_split=validation_split
 )
 
-# Training data generator
 train_generator = datagen.flow_from_directory(
     directory=data_dir,
     target_size=image_size,
@@ -76,7 +53,6 @@ train_generator = datagen.flow_from_directory(
     subset='training'
 )
 
-# Validation data generator
 val_generator = datagen.flow_from_directory(
     directory=data_dir,
     target_size=image_size,
@@ -85,103 +61,111 @@ val_generator = datagen.flow_from_directory(
     subset='validation'
 )
 
-# Log total images
-total_train_images = train_generator.samples
-total_val_images = val_generator.samples
-with open(os.path.join(log_dir, "metadata.txt"), "w") as metadata_file:
-    metadata_file.write(f"{gpu_status}\n")
-    metadata_file.write(f"Total training images: {total_train_images}\n")
-    metadata_file.write(f"Total validation images: {total_val_images}\n")
+# Define the model builder function for Keras Tuner
+def build_model(hp):
+    model = models.Sequential([
+        layers.Input(shape=(image_size[0], image_size[1], 3)),
+        layers.Conv2D(
+            filters=hp.Int("conv1_filters", min_value=32, max_value=128, step=32),
+            kernel_size=(3, 3),
+            kernel_initializer='he_normal',
+            padding='same'
+        ),
+        layers.BatchNormalization(),
+        layers.LeakyReLU(negative_slope=0.1),
+        layers.MaxPooling2D((2, 2)),
+        layers.SpatialDropout2D(hp.Float("dropout1", 0.1, 0.4, step=0.1)),
 
+        layers.Conv2D(
+            filters=hp.Int("conv2_filters", min_value=64, max_value=256, step=64),
+            kernel_size=(3, 3),
+            kernel_initializer='he_normal',
+            padding='same'
+        ),
+        layers.BatchNormalization(),
+        layers.LeakyReLU(negative_slope=0.1),
+        layers.MaxPooling2D((2, 2)),
+        layers.SpatialDropout2D(hp.Float("dropout2", 0.1, 0.4, step=0.1)),
 
-lr_schedule = ExponentialDecay(
-    initial_learning_rate=1e-4,
-    decay_steps=1000,  # Decay every 1000 steps
-    decay_rate=0.96,  # Reduce LR by 4% each step
-    staircase=True
+        layers.Conv2D(
+            filters=hp.Int("conv3_filters", min_value=128, max_value=512, step=128),
+            kernel_size=(3, 3),
+            kernel_initializer='he_normal',
+            padding='same'
+        ),
+        layers.BatchNormalization(),
+        layers.LeakyReLU(negative_slope=0.1),
+        layers.GlobalAveragePooling2D(),
+
+        layers.Dense(
+            units=hp.Int("dense1_units", min_value=64, max_value=512, step=64),
+            activation='relu',
+            kernel_regularizer=regularizers.l1_l2(l1=0.001, l2=0.001)
+        ),
+        layers.Dropout(hp.Float("dropout3", 0.1, 0.5, step=0.1)),
+
+        layers.Dense(
+            units=hp.Int("dense2_units", min_value=64, max_value=256, step=64),
+            activation='relu',
+            kernel_regularizer=regularizers.l1_l2(l1=0.001, l2=0.001)
+        ),
+        layers.Dropout(hp.Float("dropout4", 0.1, 0.5, step=0.1)),
+
+        layers.Dense(1, activation='sigmoid')
+    ])
+
+    # Compile the model
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(
+            learning_rate=hp.Choice("learning_rate", values=[1e-2, 1e-3, 1e-4])
+        ),
+        loss='binary_crossentropy',
+        metrics=['accuracy']
+    )
+    return model
+
+# Initialize Keras Tuner
+tuner = kt.Hyperband(
+    build_model,
+    objective="val_accuracy",
+    max_epochs=10,
+    factor=3,
+    directory=log_dir,
+    project_name="cnn_tuning"
 )
 
-
-# Build the model
-model = models.Sequential([
-    layers.Input(shape=(image_size[0], image_size[1], 3)),
-    layers.Conv2D(32, (3, 3), kernel_initializer='he_normal', padding='same'),
-    layers.BatchNormalization(),
-    layers.LeakyReLU(negative_slope=0.1),
-    layers.MaxPooling2D((2, 2)),
-    layers.SpatialDropout2D(0.2),
-
-    layers.Conv2D(64, (3, 3), kernel_initializer='he_normal', padding='same'),
-    layers.BatchNormalization(),
-    layers.LeakyReLU(negative_slope=0.1),
-    layers.MaxPooling2D((2, 2)),
-    layers.SpatialDropout2D(0.2),
-
-    layers.Conv2D(128, (3, 3), kernel_initializer='he_normal', padding='same'),
-    layers.BatchNormalization(),
-    layers.LeakyReLU(negative_slope=0.1),
-    layers.GlobalAveragePooling2D(),
-
-    layers.Dense(dense_units[0], activation='relu', kernel_regularizer=regularizers.l1_l2(l1=l1_regularization, l2=l2_regularization)),
-    layers.Dropout(dropout_rate),
-    layers.Dense(dense_units[1], activation='relu', kernel_regularizer=regularizers.l1_l2(l1=l1_regularization, l2=l2_regularization)),
-    layers.Dropout(dropout_rate),
-    layers.Dense(1, activation='sigmoid')
-])
-
-# Compile the model
-if optimizer_type == "adam":
-    optimizer = tf.keras.optimizers.Adam(learning_rate=lr_schedule)
-elif optimizer_type == "sgd":
-    optimizer = tf.keras.optimizers.SGD(learning_rate=lr_schedule)
-else:
-    raise ValueError("Unsupported optimizer type.")
-
-model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
-
-# Callbacks
+# Callbacks for early stopping and logging
 callbacks = [
-    EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True),
-    ModelCheckpoint(filepath=checkpoint_params['filepath'], monitor='val_loss', save_best_only=True),
-
+    EarlyStopping(monitor="val_loss", patience=5, restore_best_weights=True),
+    ModelCheckpoint(filepath=model_path, monitor="val_loss", save_best_only=True)
 ]
 
-if lr_scheduler_params.get('enable', False):
-    callbacks.append(ReduceLROnPlateau(
-        monitor=lr_scheduler_params['monitor'],
-        factor=lr_scheduler_params['factor'],
-        patience=lr_scheduler_params['patience'],
-        min_lr=float(lr_scheduler_params['min_lr'])
-    ))
+# Perform hyperparameter search
+tuner.search(
+    train_generator,
+    validation_data=val_generator,
+    epochs=10,
+    callbacks=callbacks
+)
 
-# CSV logging setup
-csv_path = os.path.join(log_dir, "training_log.csv")
-with open(csv_path, "w", newline="") as csvfile:
-    csv_writer = csv.writer(csvfile)
-    csv_writer.writerow(["epoch", "accuracy", "loss", "val_accuracy", "val_loss"])
+# Get the best hyperparameters and best model
+best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
+best_model = tuner.get_best_models(num_models=1)[0]
 
-# Training with epoch logging
-class CSVLoggerCallback(tf.keras.callbacks.Callback):
-    def on_epoch_end(self, epoch, logs=None):
-        logs = logs or {}
-        with open(csv_path, "a", newline="") as csvfile:
-            csv_writer = csv.writer(csvfile)
-            csv_writer.writerow([epoch + 1, logs.get("accuracy"), logs.get("loss"),
-                                 logs.get("val_accuracy"), logs.get("val_loss")])
+# Print the best hyperparameters
+print(f"Best hyperparameters: {best_hps.values}")
 
-callbacks.append(CSVLoggerCallback())
-
-# Training
-history = model.fit(
+# Train the best model on the full dataset (optional fine-tuning)
+history = best_model.fit(
     train_generator,
     validation_data=val_generator,
     epochs=epochs,
     callbacks=callbacks
 )
 
-# Evaluate and print results
-loss, accuracy = model.evaluate(val_generator, verbose=1)
+# Evaluate the model
+loss, accuracy = best_model.evaluate(val_generator, verbose=1)
 print(f"Validation Loss: {loss:.4f}, Validation Accuracy: {accuracy:.4f}")
 
-# Save the model
-model.save(model_path)
+# Save the best model
+best_model.save(model_path)
