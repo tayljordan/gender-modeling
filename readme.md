@@ -1,28 +1,10 @@
-Value             |Best Value So Far |Hyperparameter
-3                 |4                 |num_conv_layers
-32                |128               |conv_0_filters
-3                 |5                 |kernel_size
-False             |False             |add_dropout
-64                |32                |conv_1_filters
-384               |256               |dense1_units
-relu              |relu              |activation
-0.0006            |0.0006            |l1
-0.0005            |0.0008            |l2
-0.25              |0.1               |dropout3
-0.1               |0.3               |dropout_rate
-64                |64                |conv_2_filters
-128               |32                |conv_3_filters
-
-
-
-
 # Gender Identification in Maritime using TensorFlow and PyTorch
 
 This project implements gender identification models tailored to the maritime industry using TensorFlow and PyTorch. The goal is to analyze maritime-related imagery to address gender disparity in the maritime sector.
 
 ---
 
-## Collaborators:
+## Collaborators
 
 <p align="center">
   <img src="static/amet-logo.png" alt="AMET Logo" width="30%">
@@ -30,49 +12,47 @@ This project implements gender identification models tailored to the maritime in
 <img src="static/si_logo.png" alt="SI Logo" width="30%">
 </p>
 
-## Co-Authors (alphabetical):
+## Co-Authors (alphabetical)
 
-[Dr. Padmapriya Jayaraman](https://github.com/padmapriyajayaraman)
-
-Dr. T. Sasilatha
-
----
-
-## **Features**
-1. **Transfer Learning**:
-   - Uses a pre-trained MobileNetV2 base for feature extraction.
-   - Fine-tunes the base model after training the custom layers.
-   
-2. **Dynamic Configuration**:
-   - All key parameters (e.g., image size, learning rate, batch size) are adjustable via a `config.yaml` file.
-   - Facilitates rapid experimentation without modifying the codebase.
-
-3. **Callbacks**:
-   - Early stopping to avoid overfitting.
-   - Learning rate adjustment using `ReduceLROnPlateau`.
-   - TensorBoard logging for detailed visualization.
-
-4. **Regularization**:
-   - L2 regularization and dropout are applied to mitigate overfitting.
-
-5. **Reproducibility**:
-   - Configurable random seed for consistent results.
+[Dr. Padmapriya Jayaraman](https://github.com/padmapriyajayaraman)  
+Dr. T. Sasilatha  
 
 ---
 
-## **Setup Instructions**
+## Features
 
-### **1. Clone the Repository**
+1. **Dynamic Hyperparameter Tuning**  
+   - Utilizes Keras Tuner for searching optimal hyperparameters.  
+
+2. **Transfer Learning**  
+   - Base feature extraction with MobileNetV2.  
+
+3. **Augmented Training**  
+   - Incorporates rotation, zoom, and brightness adjustment for robustness.
+
+4. **Regularization Techniques**  
+   - Implements dropout and L2 regularization.
+
+5. **False Image Analysis**  
+   - Misclassified images are stored for detailed analysis.
+
+---
+
+## Setup Instructions
+
+### 1. Clone the Repository
+
 ```bash
 git clone <repository-url>
 cd <repository-name>
 ```
 
-### **2. Install Dependencies**
+### 2. Install Dependencies
+
 Create and activate a virtual environment:
 ```bash
 python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 ```
 
 Install the required Python libraries:
@@ -80,121 +60,81 @@ Install the required Python libraries:
 pip install -r requirements.txt
 ```
 
-### **3. Prepare Datasets**
-Place your datasets in the following directory structure:
+### 3. Prepare Datasets
+
+Organize your dataset in the following structure:
 ```
-gender-training-dataset/
-    female_augmented/
+data/
+    female/
         image1.jpg
         image2.jpg
-    male_augmented/
+    male/
         image1.jpg
         image2.jpg
-test-set-female/
-    test_image1.jpg
-    test_image2.jpg
-test-set-male/
-    test_image1.jpg
-    test_image2.jpg
 ```
 
 ---
 
-## **Usage**
+## Usage
 
-### **1. Update Configuration**
-Edit the `config.yaml` file to customize the parameters:
-```yaml
-parameters:
-  image_size: [64, 64]
-  batch_size: 32
-  epochs: 10
-  rescale: 1.0
-  validation_split: 0.2
-  optimizer:
-    type: "Adam"
-    learning_rate: 0.001
-  lr_scheduler:
-    enable: true
-    monitor: "val_loss"
-    factor: 0.2
-    patience: 3
-    min_lr: 1e-6
-directories:
-  female_dir: "gender-training-dataset/female_augmented"
-  male_dir: "gender-training-dataset/male_augmented"
-  test_set_male: "test-set-male"
-  test_set_female: "test-set-female"
-logs:
-  tensorboard_log_dir: "logs/gender_model_v1"
-model:
-  path: "best_gender_model.keras"
-  checkpoint:
-    enable: true
-    filepath: "best_gender_model.keras"
-    monitor: "val_loss"
-    save_best_only: true
-```
+### 1. Update Configuration
 
-### **2. Train the Model**
-Run the training script:
+Edit the `config.yaml` file to define parameters such as image size, learning rate, and dataset paths.
+
+### 2. Run Training
+
 ```bash
 python train.py
 ```
 
-### **3. Evaluate the Model**
-Evaluate the model using your test sets:
+### 3. Evaluate Model
+
+Evaluate the model and analyze results:
 ```bash
 python test.py
 ```
 
 ---
 
-## **Key Components**
+## Key Highlights
 
-### **Configuration (`config.yaml`)**
-All key training and testing parameters are defined in `config.yaml`:
-- Model architecture and optimization settings.
-- Dataset paths and preprocessing steps.
-- Callback settings for checkpoints and learning rate reduction.
+- **Hyperparameter Search**  
+  Bayesian Optimization via Keras Tuner dynamically determines the best configuration.
 
-### **Model Architecture**
-The model is built using:
-- Pre-trained MobileNetV2 as a base model.
-- Additional dense layers with L2 regularization and dropout for robust training.
+- **Misclassification Handling**  
+  Copies false positives and false negatives into directories for debugging.
 
-### **Callbacks**
-- **EarlyStopping**: Stops training when validation loss stops improving.
-- **ModelCheckpoint**: Saves the best model based on validation performance.
-- **ReduceLROnPlateau**: Reduces the learning rate when training stagnates.
-- **TensorBoard**: Logs training metrics for visualization.
+- **Extensive Augmentation**  
+  Enhances dataset variability using transformations like rotation and brightness adjustment.
 
 ---
 
-## **Visualization**
-Use TensorBoard to monitor training metrics:
+## Visualization
+
+Monitor training and validation using TensorBoard:
 ```bash
-tensorboard --logdir=logs/gender_model_v1
+tensorboard --logdir logs/
 ```
 
 ---
 
-## **Requirements**
-- Python 3.8 or later
-- TensorFlow 2.6 or later
-- PyYAML for configuration management
-- NumPy for numerical computations
+## Requirements
+
+- Python 3.8 or later  
+- TensorFlow 2.6 or later  
+- PyYAML  
+- NumPy  
 
 ---
 
-## **Notes**
-- The current implementation uses color images. For grayscale, update the input shape to `(height, width, 1)`.
-- Datasets must be preprocessed and augmented before training if additional augmentation is disabled.
+## Notes
+
+- Misclassified images are stored in `false-images/female_false` and `false-images/male_false`.
+- The current implementation uses RGB images. Update input shape to `(height, width, 1)` for grayscale.
 
 ---
 
-## **License**
+## License
+
 This project is licensed under the MIT License. See `LICENSE` for more details.
-```
-
 
