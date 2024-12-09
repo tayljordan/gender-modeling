@@ -84,6 +84,8 @@ directories = [
     "/Users/jordantaylor/PycharmProjects/gender-modeling/gender-training-dataset/male_augmented",
     "/Users/jordantaylor/PycharmProjects/gender-modeling/test-set-female",
     "/Users/jordantaylor/PycharmProjects/gender-modeling/test-set-male",
+    "/Users/jordantaylor/PycharmProjects/gender-modeling/false-images/female_false",
+    "/Users/jordantaylor/PycharmProjects/gender-modeling/false-images/male_false"
 ]
 
 # Count images in the specified directories

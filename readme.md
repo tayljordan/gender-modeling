@@ -1,3 +1,21 @@
+Value             |Best Value So Far |Hyperparameter
+3                 |4                 |num_conv_layers
+32                |128               |conv_0_filters
+3                 |5                 |kernel_size
+False             |False             |add_dropout
+64                |32                |conv_1_filters
+384               |256               |dense1_units
+relu              |relu              |activation
+0.0006            |0.0006            |l1
+0.0005            |0.0008            |l2
+0.25              |0.1               |dropout3
+0.1               |0.3               |dropout_rate
+64                |64                |conv_2_filters
+128               |32                |conv_3_filters
+
+
+
+
 # Gender Identification in Maritime using TensorFlow and PyTorch
 
 This project implements gender identification models tailored to the maritime industry using TensorFlow and PyTorch. The goal is to analyze maritime-related imagery to address gender disparity in the maritime sector.
