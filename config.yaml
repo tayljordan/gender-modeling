@@ -58,10 +58,10 @@ model:
   path: best_gender_model_v2.keras
 parameters:
   batch_size: 32
-  conv1_filters: 16
-  conv2_filters: 128
+  conv1_filters: 32
+  conv2_filters: 32
   conv3_filters: 384
-  dense1_units: 96
+  dense1_units: 128
   dense2_units: 256
   dropout1: 0.1
   dropout2: 0.2
