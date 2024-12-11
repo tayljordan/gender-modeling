@@ -10,7 +10,7 @@ parameters:
   dropout4: 0.5
   learning_rate: 0.0005
   batch_size: 64
-  epochs: 50
+  epochs: 80
   image_size:
     - 64
     - 64
