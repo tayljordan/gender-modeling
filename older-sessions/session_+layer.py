@@ -165,7 +165,7 @@ tuner = kt.BayesianOptimization(
 
 # Callbacks for early stopping and logging
 callbacks = [
-    EarlyStopping(monitor="val_loss", patience=2, min_delta=0.001, restore_best_weights=True),
+    EarlyStopping(monitor="val_loss", patience=3, min_delta=0.001, restore_best_weights=True),
     ModelCheckpoint(filepath=model_path, monitor="val_loss", save_best_only=True)
 ]
 
@@ -174,7 +174,7 @@ callbacks = [
 tuner.search(
     train_generator,
     validation_data=val_generator,
-    epochs=max_epochs,
+    epochs=50,
     callbacks=callbacks
 )
 

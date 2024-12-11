@@ -36,8 +36,8 @@ hyperparameter_ranges:
   - 2
   - 4
 keras:
-  keras_max_epochs: 20
-  keras_max_trials: 10
+  keras_max_epochs: 8
+  keras_max_trials: 12
 logs:
   detailed_logs_path: logs/detailed_training_logs.csv
   log_dir: logs/gender_model_v2
@@ -57,25 +57,25 @@ model:
     save_best_only: true
   path: best_gender_model_v2.keras
 parameters:
-  batch_size: 32
+  batch_size: 64
   conv1_filters: 32
-  conv2_filters: 32
-  conv3_filters: 384
-  dense1_units: 128
+  conv2_filters: 192
+  conv3_filters: 128
+  dense1_units: 256
   dense2_units: 256
   dropout1: 0.1
-  dropout2: 0.2
+  dropout2: 0.1
   dropout3: 0.1
   dropout4: 0.2
   dropout_rate: 0.3
   dropout_rates:
     conv_layers: 0.2
     dense_layers: 0.3
-  epochs: 20
+  epochs: 50
   image_size:
   - 64
   - 64
-  learning_rate: 0.001
+  learning_rate: 0.0001
   lr_scheduler:
     decay_rate: 0.9
     decay_steps: 1000

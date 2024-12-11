@@ -1,0 +1,57 @@
+parameters:
+  conv1_filters: 112
+  dropout1: 0.15
+  conv2_filters: 128
+  dropout2: 0.2
+  conv3_filters: 160
+  dense1_units: 224
+  dropout3: 0.5
+  dense2_units: 160
+  dropout4: 0.5
+  learning_rate: 0.0005
+  batch_size: 64
+  epochs: 50
+  image_size:
+    - 64
+    - 64
+  validation_split: 0.2
+  rescale: 0.00392156862745098
+  l2_regularization:
+    l1: 0.0008
+    l2: 0.001
+
+directories:
+  data_dir: /Users/jordantaylor/PycharmProjects/gender-modeling/gender-training-dataset
+  log_dir: /Users/jordantaylor/PycharmProjects/gender-modeling/logs/gender_model_v2
+  model_path: /Users/jordantaylor/PycharmProjects/gender-modeling/models/best_gender_model_v2.keras
+
+logs:
+  detailed_logs_path: /Users/jordantaylor/PycharmProjects/gender-modeling/logs/detailed_training_logs.csv
+  tensorboard:
+    enable: true
+    histogram_freq: 1
+
+model:
+  checkpoint:
+    enable: true
+    filepath: /Users/jordantaylor/PycharmProjects/gender-modeling/checkpoints/best_gender_model_v2.keras
+    monitor: val_loss
+    save_best_only: true
+    early_stopping:
+      monitor: val_loss
+      patience: 5
+      restore_best_weights: true
+
+data_generators:
+  enable_augmentation: true
+  augmentation_params:
+    brightness_range:
+      - 0.95
+      - 1.05
+    fill_mode: nearest
+    height_shift_range: 0.02
+    horizontal_flip: true
+    rotation_range: 5
+    shear_range: 0.05
+    width_shift_range: 0.02
+    zoom_range: 0.05
