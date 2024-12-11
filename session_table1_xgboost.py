@@ -1,10 +1,9 @@
-
 import os
 import yaml
 import numpy as np
 import xgboost as xgb
-from tensorflow.keras import models
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from sklearn.preprocessing import StandardScaler
 
 # Load configuration from YAML file
 config_path = "/Users/jordantaylor/PycharmProjects/gender-modeling/config_grind.yaml"
@@ -43,30 +42,22 @@ val_generator = datagen.flow_from_directory(
     shuffle=False
 )
 
-from tensorflow.keras import Input, Model
-
-# Load the trained Sequential model
-loaded_model = models.load_model("/Users/jordantaylor/PycharmProjects/gender-modeling/models/best_gender_model_v2.keras")
-
-# Rebuild as a functional model
-input_layer = Input(shape=(image_size[0], image_size[1], 3))
-outputs = loaded_model(input_layer)  # Call the Sequential model
-feature_extractor = Model(inputs=input_layer, outputs=outputs)
-
-# Extract features from the penultimate layer
-feature_extractor = Model(
-    inputs=feature_extractor.input,  # Input from the rebuilt model
-    outputs=feature_extractor.layers[-2].output  # Use the penultimate layer for features
+# Feature extraction using flattened pixel data directly
+# Convert images from generators into 2D arrays
+train_features = np.concatenate(
+    [train_generator[i][0].reshape(len(train_generator[i][1]), -1) for i in range(len(train_generator))], axis=0
 )
-
-# Extract features and flatten them
-train_features = feature_extractor.predict(train_generator, verbose=1)
-train_features = train_features.reshape(train_features.shape[0], -1)  # Flatten to 2D
 train_labels = train_generator.classes
 
-val_features = feature_extractor.predict(val_generator, verbose=1)
-val_features = val_features.reshape(val_features.shape[0], -1)  # Flatten to 2D
+val_features = np.concatenate(
+    [val_generator[i][0].reshape(len(val_generator[i][1]), -1) for i in range(len(val_generator))], axis=0
+)
 val_labels = val_generator.classes
+
+# Normalize the features
+scaler = StandardScaler()
+train_features = scaler.fit_transform(train_features)
+val_features = scaler.transform(val_features)
 
 # Train XGBoost model using CPU
 xgb_model = xgb.XGBClassifier(
