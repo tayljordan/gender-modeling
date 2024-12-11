@@ -8,6 +8,7 @@ from tensorflow.keras.optimizers import Adam
 import warnings
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 
+
 # Load configuration from YAML file
 config_path = "/Users/jordantaylor/PycharmProjects/gender-modeling/config_grind.yaml"
 with open(config_path, "r") as file:

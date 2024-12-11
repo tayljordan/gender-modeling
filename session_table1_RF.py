@@ -49,9 +49,9 @@ val_generator = datagen.flow_from_directory(
 cnn_model = load_model(model_path)
 
 # Rebuild the model with an explicit input layer
-inputs = tf.keras.Input(shape=(image_size[0], image_size[1], 3))
-outputs = cnn_model(inputs)  # Pass inputs through the model to establish the layers
-cnn_model = tf.keras.Model(inputs=inputs, outputs=outputs)
+# inputs = tf.keras.Input(shape=(image_size[0], image_size[1], 3))
+# outputs = cnn_model(inputs)  # Pass inputs through the model to establish the layers
+# cnn_model = tf.keras.Model(inputs=inputs, outputs=outputs)
 
 # Use an appropriate layer for feature extraction
 feature_extractor = tf.keras.Model(inputs=cnn_model.input, outputs=cnn_model.layers[-2].output)
