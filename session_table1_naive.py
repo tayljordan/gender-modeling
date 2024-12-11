@@ -11,7 +11,7 @@ data_dir = "/Users/jordantaylor/PycharmProjects/gender-modeling/gender-training-
 # Parameters
 validation_split = 0.2
 downscaled_image_size = (64, 64)  # Smaller resolution for memory efficiency
-batch_size = 16
+batch_size = 32
 
 # Ensure the dataset directory exists
 if not os.path.exists(data_dir):
