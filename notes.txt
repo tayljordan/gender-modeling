@@ -175,3 +175,133 @@ Epoch 80/80
 Validation Loss: 0.3685, Validation Accuracy: 0.8533
 
 Process finished with exit code 0
+
+
+
+/Users/jordantaylor/PycharmProjects/gender-modeling/.venv/bin/python /Users/jordantaylor/PycharmProjects/gender-modeling/session_table1_xgboost.py
+Found 16000 images belonging to 2 classes.
+Found 4000 images belonging to 2 classes.
+2024-12-10 20:58:55.117631: I metal_plugin/src/device/metal_device.cc:1154] Metal device set to: Apple M3
+2024-12-10 20:58:55.117651: I metal_plugin/src/device/metal_device.cc:296] systemMemory: 8.00 GB
+2024-12-10 20:58:55.117654: I metal_plugin/src/device/metal_device.cc:313] maxCacheSize: 2.67 GB
+2024-12-10 20:58:55.117667: I tensorflow/core/common_runtime/pluggable_device/pluggable_device_factory.cc:305] Could not identify NUMA node of platform GPU ID 0, defaulting to 0. Your kernel may not have been built with NUMA support.
+2024-12-10 20:58:55.117675: I tensorflow/core/common_runtime/pluggable_device/pluggable_device_factory.cc:271] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 0 MB memory) -> physical PluggableDevice (device: 0, name: METAL, pci bus id: <undefined>)
+/Users/jordantaylor/PycharmProjects/gender-modeling/.venv/lib/python3.10/site-packages/keras/src/trainers/data_adapters/py_dataset_adapter.py:121: UserWarning: Your `PyDataset` class should call `super().__init__(**kwargs)` in its constructor. `**kwargs` can include `workers`, `use_multiprocessing`, `max_queue_size`. Do not pass these arguments to `fit()`, as they will be ignored.
+  self._warn_if_super_not_called()
+2024-12-10 20:58:55.792318: I tensorflow/core/grappler/optimizers/custom_graph_optimizer_registry.cc:117] Plugin optimizer for device_type GPU is enabled.
+250/250 ━━━━━━━━━━━━━━━━━━━━ 29s 117ms/step
+63/63 ━━━━━━━━━━━━━━━━━━━━ 6s 95ms/step
+/Users/jordantaylor/PycharmProjects/gender-modeling/.venv/lib/python3.10/site-packages/xgboost/sklearn.py:1395: UserWarning: `use_label_encoder` is deprecated in 1.7.0.
+  warnings.warn("`use_label_encoder` is deprecated in 1.7.0.")
+[0]	validation_0-logloss:0.65889
+[1]	validation_0-logloss:0.63526
+[2]	validation_0-logloss:0.62466
+[3]	validation_0-logloss:0.61263
+[4]	validation_0-logloss:0.60207
+[5]	validation_0-logloss:0.59321
+[6]	validation_0-logloss:0.58709
+[7]	validation_0-logloss:0.58437
+[8]	validation_0-logloss:0.58088
+[9]	validation_0-logloss:0.57937
+[10]	validation_0-logloss:0.57450
+[11]	validation_0-logloss:0.56994
+[12]	validation_0-logloss:0.56858
+[13]	validation_0-logloss:0.56799
+[14]	validation_0-logloss:0.56669
+[15]	validation_0-logloss:0.56426
+[16]	validation_0-logloss:0.56803
+[17]	validation_0-logloss:0.56643
+[18]	validation_0-logloss:0.56576
+[19]	validation_0-logloss:0.56388
+[20]	validation_0-logloss:0.56317
+[21]	validation_0-logloss:0.56454
+[22]	validation_0-logloss:0.56419
+[23]	validation_0-logloss:0.56492
+[24]	validation_0-logloss:0.57020
+[25]	validation_0-logloss:0.57103
+[26]	validation_0-logloss:0.57093
+[27]	validation_0-logloss:0.57092
+[28]	validation_0-logloss:0.57372
+[29]	validation_0-logloss:0.57536
+[30]	validation_0-logloss:0.57639
+[31]	validation_0-logloss:0.57949
+[32]	validation_0-logloss:0.58029
+[33]	validation_0-logloss:0.58050
+[34]	validation_0-logloss:0.58084
+[35]	validation_0-logloss:0.58147
+[36]	validation_0-logloss:0.58383
+[37]	validation_0-logloss:0.58305
+[38]	validation_0-logloss:0.58587
+[39]	validation_0-logloss:0.58482
+[40]	validation_0-logloss:0.58782
+[41]	validation_0-logloss:0.59020
+[42]	validation_0-logloss:0.59201
+[43]	validation_0-logloss:0.59144
+[44]	validation_0-logloss:0.59303
+[45]	validation_0-logloss:0.59390
+[46]	validation_0-logloss:0.59443
+[47]	validation_0-logloss:0.59496
+[48]	validation_0-logloss:0.59574
+[49]	validation_0-logloss:0.59889
+[50]	validation_0-logloss:0.59980
+[51]	validation_0-logloss:0.60568
+[52]	validation_0-logloss:0.60805
+[53]	validation_0-logloss:0.60771
+[54]	validation_0-logloss:0.61064
+[55]	validation_0-logloss:0.61379
+[56]	validation_0-logloss:0.61937
+[57]	validation_0-logloss:0.62247
+[58]	validation_0-logloss:0.62262
+[59]	validation_0-logloss:0.62480
+[60]	validation_0-logloss:0.62673
+[61]	validation_0-logloss:0.62581
+[62]	validation_0-logloss:0.62756
+[63]	validation_0-logloss:0.62727
+[64]	validation_0-logloss:0.62835
+[65]	validation_0-logloss:0.62989
+[66]	validation_0-logloss:0.63006
+[67]	validation_0-logloss:0.63055
+[68]	validation_0-logloss:0.63551
+[69]	validation_0-logloss:0.63489
+[70]	validation_0-logloss:0.63728
+[71]	validation_0-logloss:0.63741
+[72]	validation_0-logloss:0.64033
+[73]	validation_0-logloss:0.64091
+[74]	validation_0-logloss:0.64055
+[75]	validation_0-logloss:0.64267
+[76]	validation_0-logloss:0.64342
+[77]	validation_0-logloss:0.64426
+[78]	validation_0-logloss:0.64767
+[79]	validation_0-logloss:0.64830
+[80]	validation_0-logloss:0.64896
+[81]	validation_0-logloss:0.65035
+[82]	validation_0-logloss:0.65198
+[83]	validation_0-logloss:0.65190
+[84]	validation_0-logloss:0.65728
+[85]	validation_0-logloss:0.66059
+[86]	validation_0-logloss:0.66109
+[87]	validation_0-logloss:0.66133
+[88]	validation_0-logloss:0.66172
+[89]	validation_0-logloss:0.66525
+[90]	validation_0-logloss:0.66852
+[91]	validation_0-logloss:0.66818
+[92]	validation_0-logloss:0.66955
+[93]	validation_0-logloss:0.67076
+[94]	validation_0-logloss:0.67091
+[95]	validation_0-logloss:0.67214
+[96]	validation_0-logloss:0.67368
+[97]	validation_0-logloss:0.67536
+[98]	validation_0-logloss:0.67648
+[99]	validation_0-logloss:0.67527
+XGBoost Training Accuracy: 1.0000
+XGBoost Validation Accuracy: 0.7408
+Traceback (most recent call last):
+  File "/Users/jordantaylor/PycharmProjects/gender-modeling/session_table1_xgboost.py", line 93, in <module>
+    cnn_loss, cnn_accuracy = feature_extractor.evaluate(val_generator, verbose=1)
+  File "/Users/jordantaylor/PycharmProjects/gender-modeling/.venv/lib/python3.10/site-packages/keras/src/utils/traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/Users/jordantaylor/PycharmProjects/gender-modeling/.venv/lib/python3.10/site-packages/keras/src/trainers/trainer.py", line 1035, in _assert_compile_called
+    raise ValueError(msg)
+ValueError: You must call `compile()` before using the model.
+
+Process finished with exit code 1
