@@ -13,6 +13,7 @@ logs/
 /test-set-large-female/
 /gender-master-dataset/
 /false-images/
+/models/
 
 # Ignore virtual environment
 /venv/

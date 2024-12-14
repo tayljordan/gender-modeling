@@ -69,7 +69,7 @@ def copy_images_balanced(master_dir, priority_female, priority_male, train_val_f
     print(f"Copied {len(test_male_images)} images to {test_male}")
 
 # Example usage
-num_images_to_pull = 12500  # Specify the maximum number of images to pull
+num_images_to_pull = 50000  # Specify the maximum number of images to pull
 copy_images_balanced(
     master_dir=master_dataset_dir,
     priority_female=priority_female_dir,

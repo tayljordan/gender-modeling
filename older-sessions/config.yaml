@@ -1,18 +1,25 @@
 class_weights:
   calculate: auto
-data_generators:
-  augmentation_params:
-    brightness_range:
-    - 0.95
-    - 1.05
-    fill_mode: nearest
-    height_shift_range: 0.02
-    horizontal_flip: true
-    rotation_range: 5
-    shear_range: 0.05
-    width_shift_range: 0.02
-    zoom_range: 0.05
-  enable_augmentation: true
+augmentation_params:
+  brightness_range:
+    - 0.8
+    - 1.2
+  fill_mode: reflect
+  height_shift_range: 0.1
+  horizontal_flip: true
+  vertical_flip: false  # Add this if vertical flipping is applicable for your data
+  rotation_range: 15
+  shear_range: 0.2
+  width_shift_range: 0.1
+  zoom_range:
+    - 0.8
+    - 1.2
+  channel_shift_range: 30  # Adjusts pixel intensities for color shifts
+  contrast_range:  # Custom parameter if supported by your framework
+    - 0.8
+    - 1.2
+enable_augmentation: true
+
 directories:
   data_dir: gender-training-dataset
   female_dir: gender-training-dataset/female_augmented
