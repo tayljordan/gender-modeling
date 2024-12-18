@@ -12,8 +12,8 @@ parameters:
   batch_size: 64
   epochs: 80
   image_size:
-    - 64
-    - 64
+    - 128
+    - 128
   validation_split: 0.2
   rescale: 0.00392156862745098
   l2_regularization:

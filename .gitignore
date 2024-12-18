@@ -1,10 +1,7 @@
-# Ignore logs
-/logs/
-logs/
-*.log
+
 
 # Ignore datasets
-/gender-training-dataset/
+
 /images.npy
 /labels.npy
 /false_negatives/
